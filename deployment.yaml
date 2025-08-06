@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devcontainer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: devcontainer
+  template:
+    metadata:
+      labels:
+        app: devcontainer
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: devcontainer
+          image: mcr.microsoft.com/devcontainers/base:debian  # ← Microsoft Devcontainer Standardimage
+          command: ["sleep"]
+          args: ["infinity"]
+          env:
+            - name: KUBECONFIG
+              value: /home/vscode/.kube/config
+          volumeMounts:
+            - name: home-volume
+              mountPath: /home/vscode
+            - name: workspace-volume
+              mountPath: /home/vscode/workspace
+      volumes:
+        - name: home-volume
+          emptyDir: {}
+        - name: workspace-volume
+          emptyDir: {}
+
